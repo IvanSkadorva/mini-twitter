@@ -54,6 +54,32 @@ function extractHashtags(content: string): string[] {
 import TweetForm from "../components/TweetForm";
 import TweetList from "../components/TweetList";
 import FeedHeader from "../components/FeedHeader";
+import TweetFormSkeleton from "../components/TweetFormSkeleton";
+import TweetSkeleton from "../components/TweetSkeleton";
+
+function ErrorBanner({
+  message,
+  onClose,
+}: {
+  message: string;
+  onClose: () => void;
+}) {
+  if (!message) return null;
+  return (
+    <div
+      className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-4 flex items-center justify-between"
+      role="alert"
+    >
+      <span>{message}</span>
+      <button
+        onClick={onClose}
+        className="ml-4 text-red-700 font-bold text-lg leading-none focus:outline-none"
+      >
+        &times;
+      </button>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -72,6 +98,14 @@ export default function HomePage() {
   const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
   const [feedView, setFeedView] = useState<"latest" | "foryou">("latest");
   const maxChars = 280;
+  const [error, setError] = useState("");
+
+  const DEMO_USERS = [
+    { username: "alice" },
+    { username: "bob" },
+    { username: "charlie" },
+  ];
+  const [currentUser, setCurrentUser] = useState(DEMO_USERS[0].username);
 
   useEffect(() => {
     fetch("http://localhost:3001/tweets")
@@ -94,7 +128,7 @@ export default function HomePage() {
     setSubmitting(true);
     const newTweet: Tweet = {
       id: Date.now().toString(),
-      username: "demo_user",
+      username: currentUser,
       content: tweetContent,
       timestamp: new Date().toISOString(),
       likes: 0,
@@ -109,7 +143,7 @@ export default function HomePage() {
         body: JSON.stringify(newTweet),
       });
     } catch (err) {
-      // Optionally handle error, e.g., revert optimistic update
+      setError("Failed to post tweet. Please try again later.");
     } finally {
       setSubmitting(false);
     }
@@ -132,7 +166,7 @@ export default function HomePage() {
         body: JSON.stringify({ likes: tweet.likes + 1 }),
       });
     } catch (err) {
-      // Optionally handle error, e.g., revert optimistic update
+      setError("Failed to like tweet. Please try again later.");
     }
   };
 
@@ -147,7 +181,7 @@ export default function HomePage() {
     setReplySubmitting(true);
     const newReply: Reply = {
       id: Date.now().toString(),
-      username: "demo_user",
+      username: currentUser,
       content: replyContent,
       timestamp: new Date().toISOString(),
       likes: 0,
@@ -170,7 +204,7 @@ export default function HomePage() {
         body: JSON.stringify({ replies: [...tweet.replies, newReply] }),
       });
     } catch (err) {
-      // Optionally handle error, e.g., revert optimistic update
+      setError("Failed to reply to tweet. Please try again later.");
     } finally {
       setReplySubmitting(false);
     }
@@ -187,7 +221,7 @@ export default function HomePage() {
         method: "DELETE",
       });
     } catch (err) {
-      // Optionally handle error, e.g., revert optimistic update
+      setError("Failed to delete tweet. Please try again later.");
     }
   };
 
@@ -228,6 +262,21 @@ export default function HomePage() {
   return (
     <main className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mini Twitter Feed</h1>
+      <ErrorBanner message={error} onClose={() => setError("")} />
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-sm text-gray-500">User:</span>
+        <select
+          value={currentUser}
+          onChange={(e) => setCurrentUser(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          {DEMO_USERS.map((u) => (
+            <option key={u.username} value={u.username}>
+              @{u.username}
+            </option>
+          ))}
+        </select>
+      </div>
       <FeedHeader
         feedView={feedView}
         setFeedView={setFeedView}
@@ -240,30 +289,17 @@ export default function HomePage() {
         onSubmit={handleSubmit}
         submitting={submitting}
         maxChars={maxChars}
+        username={currentUser}
       />
       {loading ? (
-        <div className="flex justify-center items-center h-40">
-          <svg
-            className="animate-spin h-8 w-8 text-blue-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
-        </div>
+        <>
+          <TweetFormSkeleton />
+          <ul className="space-y-4">
+            <TweetSkeleton />
+            <TweetSkeleton />
+            <TweetSkeleton />
+          </ul>
+        </>
       ) : (
         <TweetList
           tweets={tweetsToShow}
