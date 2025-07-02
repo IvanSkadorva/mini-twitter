@@ -6,6 +6,7 @@ A simplified, feature-rich Twitter-like web application built with Next.js 15, R
 - **Frontend:** Next.js 15 (App Router), React, Tailwind CSS
 - **Backend:** Mock REST API (json-server)
 - **Component Library:** Storybook
+- **Cursor:** for code generation
 
 ## Features
 - Tweet feed with sorting by most recent

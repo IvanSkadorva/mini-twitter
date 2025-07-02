@@ -2,6 +2,13 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { parseHashtags, extractHashtags } from "../utils/helpers";
+import {
+  getTweets,
+  postTweet,
+  likeTweet,
+  replyToTweet,
+  deleteTweet,
+} from "../api/tweets";
 
 interface Reply {
   id: string;
@@ -25,30 +32,7 @@ import TweetList from "../components/TweetList";
 import FeedHeader from "../components/FeedHeader";
 import TweetFormSkeleton from "../components/TweetFormSkeleton";
 import TweetSkeleton from "../components/TweetSkeleton";
-
-function ErrorBanner({
-  message,
-  onClose,
-}: {
-  message: string;
-  onClose: () => void;
-}) {
-  if (!message) return null;
-  return (
-    <div
-      className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-4 flex items-center justify-between"
-      role="alert"
-    >
-      <span>{message}</span>
-      <button
-        onClick={onClose}
-        className="ml-4 text-red-700 font-bold text-lg leading-none focus:outline-none"
-      >
-        &times;
-      </button>
-    </div>
-  );
-}
+import ErrorBanner from "../components/ErrorBanner";
 
 export default function HomePage() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -77,12 +61,10 @@ export default function HomePage() {
   const [currentUser, setCurrentUser] = useState(DEMO_USERS[0].username);
 
   useEffect(() => {
-    fetch("http://localhost:3001/tweets")
-      .then((res) => res.json())
-      .then((data) => {
-        setTweets(data);
-        setLoading(false);
-      });
+    getTweets().then((data) => {
+      setTweets(data);
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -106,11 +88,7 @@ export default function HomePage() {
     setTweets([newTweet, ...tweets]); // Optimistic UI
     setTweetContent("");
     try {
-      await fetch("http://localhost:3001/tweets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTweet),
-      });
+      await postTweet(newTweet);
     } catch (err) {
       setError("Failed to post tweet. Please try again later.");
     } finally {
@@ -126,14 +104,10 @@ export default function HomePage() {
         tweet.id === tweetId ? { ...tweet, likes: tweet.likes + 1 } : tweet
       )
     );
+    const tweet = tweets.find((t) => t.id === tweetId);
+    if (!tweet) return;
     try {
-      const tweet = tweets.find((t) => t.id === tweetId);
-      if (!tweet) return;
-      await fetch(`http://localhost:3001/tweets/${tweetId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ likes: tweet.likes + 1 }),
-      });
+      await likeTweet(tweetId, tweet.likes + 1);
     } catch (err) {
       setError("Failed to like tweet. Please try again later.");
     }
@@ -164,14 +138,10 @@ export default function HomePage() {
     );
     setReplyContent("");
     setReplyingTo(null);
+    const tweet = tweets.find((t) => t.id === tweetId);
+    if (!tweet) return;
     try {
-      const tweet = tweets.find((t) => t.id === tweetId);
-      if (!tweet) return;
-      await fetch(`http://localhost:3001/tweets/${tweetId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ replies: [...tweet.replies, newReply] }),
-      });
+      await replyToTweet(tweetId, [...tweet.replies, newReply]);
     } catch (err) {
       setError("Failed to reply to tweet. Please try again later.");
     } finally {
@@ -186,9 +156,7 @@ export default function HomePage() {
     if (!confirmed) return;
     setTweets((prev) => prev.filter((tweet) => tweet.id !== tweetId)); // Optimistic UI
     try {
-      await fetch(`http://localhost:3001/tweets/${tweetId}`, {
-        method: "DELETE",
-      });
+      await deleteTweet(tweetId);
     } catch (err) {
       setError("Failed to delete tweet. Please try again later.");
     }

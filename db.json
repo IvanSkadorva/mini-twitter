@@ -62,7 +62,15 @@
       "content": "What's new in politics?",
       "timestamp": "2025-07-02T07:27:59.573Z",
       "likes": 0,
-      "replies": []
+      "replies": [
+        {
+          "id": "1751442051829",
+          "username": "charlie",
+          "content": "124",
+          "timestamp": "2025-07-02T07:40:51.829Z",
+          "likes": 0
+        }
+      ]
     },
     {
       "id": "1751441405557",
@@ -86,6 +94,14 @@
       "content": "#vacation will start soon\n",
       "timestamp": "2025-07-02T07:36:49.987Z",
       "likes": 1,
+      "replies": []
+    },
+    {
+      "id": "1751442173345",
+      "username": "alice",
+      "content": "Today is 200 years since ...",
+      "timestamp": "2025-07-02T07:42:53.345Z",
+      "likes": 0,
       "replies": []
     }
   ]
