@@ -25,19 +25,11 @@
       "replies": []
     },
     {
-      "id": "1751439395262",
-      "username": "demo_user",
-      "content": "what about #coding",
-      "timestamp": "2025-07-02T06:56:35.262Z",
-      "likes": 0,
-      "replies": []
-    },
-    {
       "id": "1751439401282",
       "username": "demo_user",
       "content": "my day is #today",
       "timestamp": "2025-07-02T06:56:41.282Z",
-      "likes": 0,
+      "likes": 1,
       "replies": []
     },
     {
@@ -45,7 +37,7 @@
       "username": "demo_user",
       "content": "Today is quite hot, isn't it?",
       "timestamp": "2025-07-02T07:11:23.619Z",
-      "likes": 0,
+      "likes": 1,
       "replies": []
     },
     {
@@ -63,6 +55,38 @@
           "likes": 0
         }
       ]
+    },
+    {
+      "id": "1751441279573",
+      "username": "charlie",
+      "content": "What's new in politics?",
+      "timestamp": "2025-07-02T07:27:59.573Z",
+      "likes": 0,
+      "replies": []
+    },
+    {
+      "id": "1751441405557",
+      "username": "alice",
+      "content": "#vacation was great",
+      "timestamp": "2025-07-02T07:30:05.557Z",
+      "likes": 1,
+      "replies": []
+    },
+    {
+      "id": "1751441481850",
+      "username": "alice",
+      "content": "some news",
+      "timestamp": "2025-07-02T07:31:21.850Z",
+      "likes": 1,
+      "replies": []
+    },
+    {
+      "id": "1751441809987",
+      "username": "charlie",
+      "content": "#vacation will start soon\n",
+      "timestamp": "2025-07-02T07:36:49.987Z",
+      "likes": 1,
+      "replies": []
     }
   ]
 }

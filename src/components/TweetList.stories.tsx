@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import TweetList from "./TweetList";
+import TweetSkeleton from "./TweetSkeleton";
 import { Tweet } from "../types";
 
 const meta: Meta<typeof TweetList> = {
@@ -59,4 +60,14 @@ export const Default: Story = {
       />
     );
   },
+};
+
+export const Loading: Story = {
+  render: () => (
+    <ul className="space-y-4">
+      <TweetSkeleton />
+      <TweetSkeleton />
+      <TweetSkeleton />
+    </ul>
+  ),
 };

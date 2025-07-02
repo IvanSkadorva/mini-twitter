@@ -17,12 +17,16 @@ A simplified, feature-rich Twitter-like web application built with Next.js 15, R
 - "For You" recommendations based on liked hashtags
 - Responsive, modern UI with Tailwind CSS
 - Optimistic UI updates for all actions
+- **User switching:** Post and reply as different demo users (see user switcher at the top)
+- **Error handling:** User-friendly error banners if API calls fail
+- **Loading skeletons:** Modern skeleton loaders for tweet feed and form
 
 ## Component Structure
 - `TweetForm`: Form for posting new tweets
 - `Tweet`: Displays a tweet, actions, and replies
 - `TweetList`: Renders a list of tweets and their replies
 - `FeedHeader`: View toggle and hashtag filter bar
+- `TweetFormSkeleton`/`TweetSkeleton`: Skeleton loaders for loading states
 
 ## Running the App
 1. Install dependencies:
@@ -46,11 +50,23 @@ npm run storybook
 ```
 Then visit [http://localhost:6006](http://localhost:6006)
 
+## User Switching
+- Use the dropdown at the top of the feed to switch between demo users (e.g., alice, bob, charlie).
+- The selected user will be used for all new tweets and replies, and their avatar will update accordingly.
+
+## Error Handling
+- If the backend is down or an API call fails, a red error banner will appear at the top of the feed.
+- The error can be dismissed by clicking the "×" button.
+
+## Loading Skeletons
+- While tweets or the form are loading, skeleton loaders are shown instead of spinners for a modern look.
+
 ## Reasoning & Decisions
 - Used json-server for rapid backend prototyping
 - All UI is modular and reusable, with Storybook stories for each component
 - Optimistic UI for best user experience
 - Hashtag recommendations are based on simple keyword matching for clarity
+- User switching and error handling added for realism and robustness
 
 ## Further Improvements
 - Add user authentication

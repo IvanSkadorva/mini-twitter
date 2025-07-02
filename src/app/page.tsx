@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { parseHashtags, extractHashtags } from "../utils/helpers";
 
 interface Reply {
   id: string;
@@ -17,38 +18,6 @@ interface Tweet {
   timestamp: string;
   likes: number;
   replies: Reply[];
-}
-
-function parseHashtags(content: string, onClick: (tag: string) => void) {
-  const regex = /#(\w+)/g;
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match;
-  while ((match = regex.exec(content)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(content.slice(lastIndex, match.index));
-    }
-    const tag = match[1];
-    parts.push(
-      <button
-        key={match.index}
-        className="text-blue-600 hover:underline inline"
-        onClick={() => onClick(tag)}
-        type="button"
-      >
-        #{tag}
-      </button>
-    );
-    lastIndex = regex.lastIndex;
-  }
-  if (lastIndex < content.length) {
-    parts.push(content.slice(lastIndex));
-  }
-  return parts;
-}
-
-function extractHashtags(content: string): string[] {
-  return (content.match(/#(\w+)/g) || []).map((tag) => tag.slice(1));
 }
 
 import TweetForm from "../components/TweetForm";
@@ -234,30 +203,26 @@ export default function HomePage() {
     setActiveHashtag(null);
   };
 
-  // For You: recommend tweets with hashtags matching those in liked tweets
+  const filteredTweets = activeHashtag
+    ? tweets.filter((tweet) => tweet.content.includes(`#${activeHashtag}`))
+    : tweets;
+
+  const latestTweets = [...filteredTweets].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
   const likedHashtags = tweets
     .filter((tweet) => likedTweets.includes(tweet.id))
     .flatMap((tweet) => extractHashtags(tweet.content));
-  const forYouTweets = tweets
-    .filter(
-      (tweet) =>
-        extractHashtags(tweet.content).some((tag) =>
-          likedHashtags.includes(tag)
-        ) && !likedTweets.includes(tweet.id)
-    )
+
+  const forYouTweets = filteredTweets
+    .filter((tweet) => likedTweets.includes(tweet.id))
     .sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
 
-  const filteredTweets = activeHashtag
-    ? tweets.filter((tweet) => tweet.content.includes(`#${activeHashtag}`))
-    : tweets;
-
-  let tweetsToShow = filteredTweets;
-  if (feedView === "foryou") {
-    tweetsToShow = forYouTweets;
-  }
+  let tweetsToShow = feedView === "foryou" ? forYouTweets : latestTweets;
 
   return (
     <main className="max-w-xl mx-auto p-4">

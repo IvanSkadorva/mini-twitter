@@ -1,20 +1,7 @@
 import React from "react";
 import type { Tweet, Reply } from "../types";
 import TweetComponent from "./Tweet";
-
-const getAvatarColor = (username: string) => {
-  const colors = [
-    "bg-blue-400",
-    "bg-pink-400",
-    "bg-green-400",
-    "bg-yellow-400",
-    "bg-purple-400",
-    "bg-red-400",
-  ];
-  let hash = 0;
-  for (let i = 0; i < username.length; i++) hash += username.charCodeAt(i);
-  return colors[hash % colors.length];
-};
+import { getAvatarColor } from "../utils/helpers";
 
 interface TweetListProps {
   tweets: Tweet[];
@@ -107,6 +94,7 @@ const TweetList: React.FC<TweetListProps> = ({
           parseHashtags={parseHashtags}
           maxChars={maxChars}
           replySubmitting={replySubmitting}
+          onHashtagClick={handleHashtagClick}
         >
           {tweet.replies.length > 0 && (
             <ul className="mt-4 pl-4 border-l-2 border-blue-100 bg-blue-50/40 rounded space-y-2">

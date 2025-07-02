@@ -1,6 +1,7 @@
 import React from "react";
 
 import type { Reply, Tweet } from "../types";
+import { getAvatarColor } from "../utils/helpers";
 
 interface TweetProps {
   tweet: Tweet;
@@ -18,23 +19,9 @@ interface TweetProps {
   ) => React.ReactNode;
   maxChars: number;
   replySubmitting: boolean;
+  onHashtagClick: (tag: string) => void;
   children?: React.ReactNode;
 }
-
-const getAvatarColor = (username: string) => {
-  // Simple hash for color
-  const colors = [
-    "bg-blue-400",
-    "bg-pink-400",
-    "bg-green-400",
-    "bg-yellow-400",
-    "bg-purple-400",
-    "bg-red-400",
-  ];
-  let hash = 0;
-  for (let i = 0; i < username.length; i++) hash += username.charCodeAt(i);
-  return colors[hash % colors.length];
-};
 
 const TweetComponent: React.FC<TweetProps> = ({
   tweet,
@@ -49,6 +36,7 @@ const TweetComponent: React.FC<TweetProps> = ({
   parseHashtags,
   maxChars,
   replySubmitting,
+  onHashtagClick,
   children,
 }) => (
   <li className="border rounded p-4 bg-white shadow flex flex-col sm:flex-row gap-3">
@@ -74,7 +62,7 @@ const TweetComponent: React.FC<TweetProps> = ({
         </span>
       </div>
       <div className="mt-1 text-sm break-words">
-        {parseHashtags(tweet.content, () => {})}
+        {parseHashtags(tweet.content, onHashtagClick)}
       </div>
       <div className="flex gap-4 text-xs text-gray-500 mt-2">
         <span aria-label="likes">❤️ {tweet.likes}</span>
