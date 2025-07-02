@@ -1,4 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mini Twitter Clone
+
+A simplified, feature-rich Twitter-like web application built with Next.js 15, React, and Tailwind CSS. Includes tweet feed, posting, likes, replies, deletion, hashtag filtering, and a "For You" recommendation tab. All data is served from a mock REST API using json-server.
+
+## Tech Stack
+- **Frontend:** Next.js 15 (App Router), React, Tailwind CSS
+- **Backend:** Mock REST API (json-server)
+- **Component Library:** Storybook
+
+## Features
+- Tweet feed with sorting by most recent
+- Post new tweets (with character count and validation)
+- Like tweets (one like per session)
+- Reply to tweets (one level deep)
+- Delete tweets (with confirmation)
+- Hashtag parsing and filtering
+- "For You" recommendations based on liked hashtags
+- Responsive, modern UI with Tailwind CSS
+- Optimistic UI updates for all actions
+
+## Component Structure
+- `TweetForm`: Form for posting new tweets
+- `Tweet`: Displays a tweet, actions, and replies
+- `TweetList`: Renders a list of tweets and their replies
+- `FeedHeader`: View toggle and hashtag filter bar
+
+## Running the App
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the mock backend:
+   ```bash
+   npm run serve:api
+   ```
+3. Start the Next.js app:
+   ```bash
+   npm run dev
+   ```
+4. Visit [http://localhost:3000](http://localhost:3000)
+
+## Storybook
+To view and develop components in isolation:
+```bash
+npm run storybook
+```
+Then visit [http://localhost:6006](http://localhost:6006)
+
+## Reasoning & Decisions
+- Used json-server for rapid backend prototyping
+- All UI is modular and reusable, with Storybook stories for each component
+- Optimistic UI for best user experience
+- Hashtag recommendations are based on simple keyword matching for clarity
+
+## Further Improvements
+- Add user authentication
+- Add more advanced recommendation logic
+- Add more tests and accessibility improvements
 
 ## Getting Started
 
