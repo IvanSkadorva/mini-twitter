@@ -1,8 +1,9 @@
 import React from "react";
+import { FeedView } from "../types";
 
 interface FeedHeaderProps {
-  feedView: "latest" | "foryou";
-  setFeedView: (view: "latest" | "foryou") => void;
+  feedView: FeedView;
+  setFeedView: (view: FeedView) => void;
   activeHashtag: string | null;
   clearHashtagFilter: () => void;
 }
@@ -17,23 +18,23 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
     <div className="flex gap-2">
       <button
         className={`px-3 py-1 rounded font-medium text-sm border transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          feedView === "latest"
+          feedView === FeedView.Latest
             ? "bg-blue-500 text-white border-blue-500"
             : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
         }`}
-        onClick={() => setFeedView("latest")}
-        aria-pressed={feedView === "latest"}
+        onClick={() => setFeedView(FeedView.Latest)}
+        aria-pressed={feedView === FeedView.Latest}
       >
         Latest
       </button>
       <button
         className={`px-3 py-1 rounded font-medium text-sm border transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          feedView === "foryou"
+          feedView === FeedView.ForYou
             ? "bg-blue-500 text-white border-blue-500"
             : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
         }`}
-        onClick={() => setFeedView("foryou")}
-        aria-pressed={feedView === "foryou"}
+        onClick={() => setFeedView(FeedView.ForYou)}
+        aria-pressed={feedView === FeedView.ForYou}
       >
         For You
       </button>

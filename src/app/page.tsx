@@ -9,6 +9,15 @@ import {
   replyToTweet,
   deleteTweet,
 } from "../api/tweets";
+import {
+  FeedView,
+  DEMO_USERS,
+  MAX_TWEET_CHARS,
+  ErrorMessages,
+  DELETE_CONFIRMATION,
+  APP_TITLE,
+  USER_LABEL,
+} from "../types";
 
 interface Reply {
   id: string;
@@ -49,15 +58,10 @@ export default function HomePage() {
   const [replyContent, setReplyContent] = useState("");
   const [replySubmitting, setReplySubmitting] = useState(false);
   const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
-  const [feedView, setFeedView] = useState<"latest" | "foryou">("latest");
-  const maxChars = 280;
+  const [feedView, setFeedView] = useState<FeedView>(FeedView.Latest);
+  const maxChars = MAX_TWEET_CHARS;
   const [error, setError] = useState("");
 
-  const DEMO_USERS = [
-    { username: "alice" },
-    { username: "bob" },
-    { username: "charlie" },
-  ];
   const [currentUser, setCurrentUser] = useState(DEMO_USERS[0].username);
 
   useEffect(() => {
@@ -90,7 +94,7 @@ export default function HomePage() {
     try {
       await postTweet(newTweet);
     } catch (err) {
-      setError("Failed to post tweet. Please try again later.");
+      setError(ErrorMessages.PostFailed);
     } finally {
       setSubmitting(false);
     }
@@ -109,7 +113,7 @@ export default function HomePage() {
     try {
       await likeTweet(tweetId, tweet.likes + 1);
     } catch (err) {
-      setError("Failed to like tweet. Please try again later.");
+      setError(ErrorMessages.LikeFailed);
     }
   };
 
@@ -143,28 +147,26 @@ export default function HomePage() {
     try {
       await replyToTweet(tweetId, [...tweet.replies, newReply]);
     } catch (err) {
-      setError("Failed to reply to tweet. Please try again later.");
+      setError(ErrorMessages.ReplyFailed);
     } finally {
       setReplySubmitting(false);
     }
   };
 
   const handleDelete = async (tweetId: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this tweet and its replies?"
-    );
+    const confirmed = window.confirm(DELETE_CONFIRMATION);
     if (!confirmed) return;
     setTweets((prev) => prev.filter((tweet) => tweet.id !== tweetId)); // Optimistic UI
     try {
       await deleteTweet(tweetId);
     } catch (err) {
-      setError("Failed to delete tweet. Please try again later.");
+      setError(ErrorMessages.DeleteFailed);
     }
   };
 
   const handleHashtagClick = (tag: string) => {
     setActiveHashtag(tag);
-    setFeedView("latest");
+    setFeedView(FeedView.Latest);
   };
 
   const clearHashtagFilter = () => {
@@ -190,14 +192,14 @@ export default function HomePage() {
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
 
-  let tweetsToShow = feedView === "foryou" ? forYouTweets : latestTweets;
+  let tweetsToShow = feedView === FeedView.ForYou ? forYouTweets : latestTweets;
 
   return (
     <main className="max-w-xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Mini Twitter Feed</h1>
+      <h1 className="text-2xl font-bold mb-4">{APP_TITLE}</h1>
       <ErrorBanner message={error} onClose={() => setError("")} />
       <div className="mb-2 flex items-center gap-2">
-        <span className="text-sm text-gray-500">User:</span>
+        <span className="text-sm text-gray-500">{USER_LABEL}</span>
         <select
           value={currentUser}
           onChange={(e) => setCurrentUser(e.target.value)}
