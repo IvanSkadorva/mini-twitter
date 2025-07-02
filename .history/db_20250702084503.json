@@ -1,0 +1,20 @@
+{
+  "tweets": [
+    {
+      "id": "1",
+      "username": "user123",
+      "content": "Hello, world! #coding",
+      "timestamp": "2025-05-23T09:00:00Z",
+      "likes": 3,
+      "replies": [
+        {
+          "id": "2",
+          "username": "user456",
+          "content": "Welcome to Twitter!",
+          "timestamp": "2025-05-23T09:05:00Z",
+          "likes": 1
+        }
+      ]
+    }
+  ]
+}
