@@ -13,6 +13,13 @@
           "content": "Welcome to Twitter!",
           "timestamp": "2025-05-23T09:05:00Z",
           "likes": 1
+        },
+        {
+          "id": "1751439196082",
+          "username": "demo_user",
+          "content": "123",
+          "timestamp": "2025-07-02T06:53:16.082Z",
+          "likes": 0
         }
       ]
     },
@@ -22,7 +29,15 @@
       "content": "how are you",
       "timestamp": "2025-07-02T06:50:53.134Z",
       "likes": 1,
-      "replies": []
+      "replies": [
+        {
+          "id": "1751439190080",
+          "username": "demo_user",
+          "content": "what's up?",
+          "timestamp": "2025-07-02T06:53:10.080Z",
+          "likes": 0
+        }
+      ]
     }
   ]
 }
