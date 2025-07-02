@@ -1,29 +1,6 @@
 {
   "tweets": [
     {
-      "id": "1",
-      "username": "user123",
-      "content": "Hello, world! #coding",
-      "timestamp": "2025-05-23T09:00:00Z",
-      "likes": 4,
-      "replies": [
-        {
-          "id": "2",
-          "username": "user456",
-          "content": "Welcome to Twitter!",
-          "timestamp": "2025-05-23T09:05:00Z",
-          "likes": 1
-        },
-        {
-          "id": "1751439196082",
-          "username": "demo_user",
-          "content": "123",
-          "timestamp": "2025-07-02T06:53:16.082Z",
-          "likes": 0
-        }
-      ]
-    },
-    {
       "id": "1751439053134",
       "username": "demo_user",
       "content": "how are you",

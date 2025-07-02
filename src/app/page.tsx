@@ -138,6 +138,21 @@ export default function HomePage() {
     }
   };
 
+  const handleDelete = async (tweetId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this tweet and its replies?"
+    );
+    if (!confirmed) return;
+    setTweets((prev) => prev.filter((tweet) => tweet.id !== tweetId)); // Optimistic UI
+    try {
+      await fetch(`http://localhost:3001/tweets/${tweetId}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      // Optionally handle error, e.g., revert optimistic update
+    }
+  };
+
   return (
     <main className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mini Twitter Feed</h1>
@@ -203,6 +218,12 @@ export default function HomePage() {
                   onClick={() => handleReply(tweet.id)}
                 >
                   Reply
+                </button>
+                <button
+                  className="px-3 py-1 rounded text-sm font-medium bg-red-500 text-white hover:bg-red-600"
+                  onClick={() => handleDelete(tweet.id)}
+                >
+                  Delete
                 </button>
               </div>
               {replyingTo === tweet.id && (
