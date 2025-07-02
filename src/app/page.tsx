@@ -24,6 +24,12 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [tweetContent, setTweetContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [likedTweets, setLikedTweets] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("likedTweets") || "[]");
+    }
+    return [];
+  });
   const maxChars = 280;
 
   useEffect(() => {
@@ -34,6 +40,12 @@ export default function HomePage() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("likedTweets", JSON.stringify(likedTweets));
+    }
+  }, [likedTweets]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +71,27 @@ export default function HomePage() {
       // Optionally handle error, e.g., revert optimistic update
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleLike = async (tweetId: string) => {
+    if (likedTweets.includes(tweetId)) return;
+    setLikedTweets([...likedTweets, tweetId]);
+    setTweets((prev) =>
+      prev.map((tweet) =>
+        tweet.id === tweetId ? { ...tweet, likes: tweet.likes + 1 } : tweet
+      )
+    );
+    try {
+      const tweet = tweets.find((t) => t.id === tweetId);
+      if (!tweet) return;
+      await fetch(`http://localhost:3001/tweets/${tweetId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ likes: tweet.likes + 1 }),
+      });
+    } catch (err) {
+      // Optionally handle error, e.g., revert optimistic update
     }
   };
 
@@ -110,6 +143,17 @@ export default function HomePage() {
                 {new Date(tweet.timestamp).toLocaleString()} | Likes:{" "}
                 {tweet.likes} | Replies: {tweet.replies.length}
               </div>
+              <button
+                className={`mt-2 px-3 py-1 rounded text-sm font-medium ${
+                  likedTweets.includes(tweet.id)
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-pink-500 text-white hover:bg-pink-600"
+                }`}
+                onClick={() => handleLike(tweet.id)}
+                disabled={likedTweets.includes(tweet.id)}
+              >
+                {likedTweets.includes(tweet.id) ? "Liked" : "Like"}
+              </button>
             </li>
           ))}
         </ul>
