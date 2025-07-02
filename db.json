@@ -39,6 +39,14 @@
       "timestamp": "2025-07-02T06:56:41.282Z",
       "likes": 0,
       "replies": []
+    },
+    {
+      "id": "1751440283619",
+      "username": "demo_user",
+      "content": "Today is quite hot, isn't it?",
+      "timestamp": "2025-07-02T07:11:23.619Z",
+      "likes": 0,
+      "replies": []
     }
   ]
 }
