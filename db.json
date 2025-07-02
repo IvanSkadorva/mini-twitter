@@ -15,6 +15,30 @@
           "likes": 0
         }
       ]
+    },
+    {
+      "id": "1751439388389",
+      "username": "demo_user",
+      "content": "how are you #coding",
+      "timestamp": "2025-07-02T06:56:28.389Z",
+      "likes": 0,
+      "replies": []
+    },
+    {
+      "id": "1751439395262",
+      "username": "demo_user",
+      "content": "what about #coding",
+      "timestamp": "2025-07-02T06:56:35.262Z",
+      "likes": 0,
+      "replies": []
+    },
+    {
+      "id": "1751439401282",
+      "username": "demo_user",
+      "content": "my day is #today",
+      "timestamp": "2025-07-02T06:56:41.282Z",
+      "likes": 0,
+      "replies": []
     }
   ]
 }

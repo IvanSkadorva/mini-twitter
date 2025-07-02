@@ -19,6 +19,34 @@ interface Tweet {
   replies: Reply[];
 }
 
+function parseHashtags(content: string, onClick: (tag: string) => void) {
+  const regex = /#(\w+)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(content.slice(lastIndex, match.index));
+    }
+    const tag = match[1];
+    parts.push(
+      <button
+        key={match.index}
+        className="text-blue-600 hover:underline inline"
+        onClick={() => onClick(tag)}
+        type="button"
+      >
+        #{tag}
+      </button>
+    );
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < content.length) {
+    parts.push(content.slice(lastIndex));
+  }
+  return parts;
+}
+
 export default function HomePage() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +61,7 @@ export default function HomePage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [replySubmitting, setReplySubmitting] = useState(false);
+  const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
   const maxChars = 280;
 
   useEffect(() => {
@@ -153,9 +182,34 @@ export default function HomePage() {
     }
   };
 
+  const handleHashtagClick = (tag: string) => {
+    setActiveHashtag(tag);
+  };
+
+  const clearHashtagFilter = () => {
+    setActiveHashtag(null);
+  };
+
+  const filteredTweets = activeHashtag
+    ? tweets.filter((tweet) => tweet.content.includes(`#${activeHashtag}`))
+    : tweets;
+
   return (
     <main className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mini Twitter Feed</h1>
+      {activeHashtag && (
+        <div className="mb-4 flex items-center gap-2">
+          <span className="text-blue-600 font-semibold">
+            Filtering by #{activeHashtag}
+          </span>
+          <button
+            className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-xs"
+            onClick={clearHashtagFilter}
+          >
+            Clear filter
+          </button>
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         className="mb-6 bg-white p-4 rounded shadow flex flex-col gap-2"
@@ -193,10 +247,12 @@ export default function HomePage() {
         <div>Loading...</div>
       ) : (
         <ul className="space-y-4">
-          {tweets.map((tweet) => (
+          {filteredTweets.map((tweet) => (
             <li key={tweet.id} className="border rounded p-4 bg-white shadow">
               <div className="font-semibold">@{tweet.username}</div>
-              <div className="mt-2">{tweet.content}</div>
+              <div className="mt-2">
+                {parseHashtags(tweet.content, handleHashtagClick)}
+              </div>
               <div className="text-xs text-gray-500 mt-1">
                 {new Date(tweet.timestamp).toLocaleString()} | Likes:{" "}
                 {tweet.likes} | Replies: {tweet.replies.length}
@@ -270,7 +326,9 @@ export default function HomePage() {
                       <div className="font-semibold text-sm">
                         @{reply.username}
                       </div>
-                      <div className="text-sm mt-1">{reply.content}</div>
+                      <div className="text-sm mt-1">
+                        {parseHashtags(reply.content, handleHashtagClick)}
+                      </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {new Date(reply.timestamp).toLocaleString()} | Likes:{" "}
                         {reply.likes}
