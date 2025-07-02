@@ -47,6 +47,10 @@ function parseHashtags(content: string, onClick: (tag: string) => void) {
   return parts;
 }
 
+function extractHashtags(content: string): string[] {
+  return (content.match(/#(\w+)/g) || []).map((tag) => tag.slice(1));
+}
+
 export default function HomePage() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,6 +66,7 @@ export default function HomePage() {
   const [replyContent, setReplyContent] = useState("");
   const [replySubmitting, setReplySubmitting] = useState(false);
   const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
+  const [feedView, setFeedView] = useState<"latest" | "foryou">("latest");
   const maxChars = 280;
 
   useEffect(() => {
@@ -184,19 +189,63 @@ export default function HomePage() {
 
   const handleHashtagClick = (tag: string) => {
     setActiveHashtag(tag);
+    setFeedView("latest");
   };
 
   const clearHashtagFilter = () => {
     setActiveHashtag(null);
   };
 
+  // For You: recommend tweets with hashtags matching those in liked tweets
+  const likedHashtags = tweets
+    .filter((tweet) => likedTweets.includes(tweet.id))
+    .flatMap((tweet) => extractHashtags(tweet.content));
+  const forYouTweets = tweets
+    .filter(
+      (tweet) =>
+        extractHashtags(tweet.content).some((tag) =>
+          likedHashtags.includes(tag)
+        ) && !likedTweets.includes(tweet.id)
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
   const filteredTweets = activeHashtag
     ? tweets.filter((tweet) => tweet.content.includes(`#${activeHashtag}`))
     : tweets;
 
+  let tweetsToShow = filteredTweets;
+  if (feedView === "foryou") {
+    tweetsToShow = forYouTweets;
+  }
+
   return (
     <main className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mini Twitter Feed</h1>
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-3 py-1 rounded font-medium text-sm border ${
+            feedView === "latest"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white text-blue-500 border-blue-500"
+          }`}
+          onClick={() => setFeedView("latest")}
+        >
+          Latest
+        </button>
+        <button
+          className={`px-3 py-1 rounded font-medium text-sm border ${
+            feedView === "foryou"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white text-blue-500 border-blue-500"
+          }`}
+          onClick={() => setFeedView("foryou")}
+        >
+          For You
+        </button>
+      </div>
       {activeHashtag && (
         <div className="mb-4 flex items-center gap-2">
           <span className="text-blue-600 font-semibold">
@@ -247,7 +296,7 @@ export default function HomePage() {
         <div>Loading...</div>
       ) : (
         <ul className="space-y-4">
-          {filteredTweets.map((tweet) => (
+          {tweetsToShow.map((tweet) => (
             <li key={tweet.id} className="border rounded p-4 bg-white shadow">
               <div className="font-semibold">@{tweet.username}</div>
               <div className="mt-2">
